@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+    background: radial-gradient(circle at top center, #111111 0%, #050505 100%);
+    color: #FAFAFA;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.5)] transition-all duration-300;
+  }
+  
+  .glass-button {
+    @apply bg-white/[0.05] hover:bg-white/[0.1] backdrop-blur-xl border border-white/[0.1] rounded-2xl transition-all duration-300;
+  }
+
+  .neon-text {
+    text-shadow: 0 0 15px rgba(0, 255, 135, 0.4), 0 0 30px rgba(0, 255, 135, 0.2);
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
