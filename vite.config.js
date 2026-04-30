@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: '/nutrimind-ai/',
+  base: process.env.GITHUB_ACTIONS ? '/nutrimind-ai/' : '/',
   plugins: [
     react(),
     VitePWA({
