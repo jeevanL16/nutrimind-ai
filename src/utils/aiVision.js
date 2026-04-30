@@ -26,7 +26,7 @@ export const predictFood = async (element) => {
   
   // Return top 3 with nutritional mapping
   return predictions.slice(0, 3).map(pred => {
-    const nutrition = getNutritionEstimate(pred.className);
+    const nutrition = findNutrition(pred.className);
     return {
       className: pred.className,
       probability: pred.probability,

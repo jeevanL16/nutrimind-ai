@@ -110,8 +110,8 @@ const ScanScreen = () => {
     const food = result || scanResult;
     addFoodLog({
       ...food,
-      quantity: 1,
-      servingSize: food.servingSize || 100,
+      quantity: parseFloat(food.quantity) || 1,
+      servingSize: parseFloat(food.servingSize) || 1,
       servingType: food.servingType || 'unit'
     });
     setActiveTab('home');

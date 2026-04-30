@@ -48,11 +48,28 @@ const useStore = create(
         return { todayLog: { ...state.todayLog, steps: newSteps } };
       }),
 
+      clearTodayLog: () => set((state) => ({
+        todayLog: { calories: 0, protein: 0, carbs: 0, fats: 0, steps: 0, items: [] },
+        user: { ...state.user, healthScore: 75 }
+      })),
+
       addFoodLog: (food) => set((state) => {
-        const itemTotals = calculateFoodTotals(food);
+        // Defensive: ensure every food entry has required fields
+        const safeFoodEntry = {
+          ...food,
+          quantity: parseFloat(food.quantity) || 1,
+          servingSize: parseFloat(food.servingSize) || 1,
+          servingType: food.servingType || 'unit',
+          calories: parseFloat(food.calories) || 0,
+          protein: parseFloat(food.protein) || 0,
+          carbs: parseFloat(food.carbs) || 0,
+          fats: parseFloat(food.fats) || 0,
+        };
+
+        const itemTotals = calculateFoodTotals(safeFoodEntry);
         
         const newItem = { 
-          ...food, 
+          ...safeFoodEntry, 
           id: Date.now(), 
           time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
           ...itemTotals
@@ -106,6 +123,17 @@ const useStore = create(
     }),
     {
       name: 'nutrimind-storage',
+      version: 2,
+      migrate: (persistedState, version) => {
+        if (version < 2) {
+          // Clear corrupted data from older versions
+          return {
+            ...persistedState,
+            todayLog: { calories: 0, protein: 0, carbs: 0, fats: 0, steps: 0, items: [] },
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );

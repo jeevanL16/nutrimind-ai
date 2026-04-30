@@ -69,12 +69,20 @@ const FloatingMic = () => {
       
       // Simple logic for the demo (realistic but local)
       if (lower.includes('apple')) detectedFood = { name: 'Apple', calories: 95, protein: 0.5, carbs: 25, fats: 0.3 };
-      else if (lower.includes('pizza')) detectedFood = { name: 'Pizza slice', calories: 285, protein: 12, carbs: 36, fats: 10 };
+      else if (lower.includes('pizza')) detectedFood = { name: 'Pizza Slice', calories: 285, protein: 12, carbs: 36, fats: 10 };
       else if (lower.includes('coffee')) detectedFood = { name: 'Black Coffee', calories: 2, protein: 0.2, carbs: 0, fats: 0 };
       else if (lower.includes('rice')) detectedFood = { name: 'Bowl of Rice', calories: 200, protein: 4, carbs: 44, fats: 0.5 };
+      else if (lower.includes('dosa')) detectedFood = { name: 'Dosa', calories: 120, protein: 3, carbs: 18, fats: 4 };
+      else if (lower.includes('idli')) detectedFood = { name: 'Idli', calories: 39, protein: 2, carbs: 8, fats: 0.1 };
+      else if (lower.includes('roti') || lower.includes('chapati')) detectedFood = { name: 'Roti', calories: 120, protein: 3, carbs: 20, fats: 3.5 };
+      else if (lower.includes('paneer')) detectedFood = { name: 'Paneer Curry', calories: 265, protein: 18, carbs: 6, fats: 20 };
+      else if (lower.includes('egg')) detectedFood = { name: 'Egg', calories: 70, protein: 6, carbs: 0, fats: 5 };
+      else if (lower.includes('chicken')) detectedFood = { name: 'Chicken Breast', calories: 165, protein: 31, carbs: 0, fats: 4 };
+      else if (lower.includes('banana')) detectedFood = { name: 'Banana', calories: 105, protein: 1, carbs: 27, fats: 0.3 };
+      else if (lower.includes('milk')) detectedFood = { name: 'Glass of Milk', calories: 150, protein: 8, carbs: 12, fats: 8 };
       
       if (detectedFood) {
-        addFoodLog(detectedFood);
+        addFoodLog({ ...detectedFood, quantity: 1, servingSize: 1, servingType: 'unit' });
       } else if (text.trim().length > 3) {
         // Fallback for unknown foods mentioned
         addFoodLog({ 
@@ -82,7 +90,10 @@ const FloatingMic = () => {
           calories: 150, 
           protein: 5, 
           carbs: 20, 
-          fats: 5 
+          fats: 5,
+          quantity: 1,
+          servingSize: 1,
+          servingType: 'unit'
         });
       }
       
@@ -179,7 +190,7 @@ const FloatingMic = () => {
 
       {/* Floating Trigger - only visible when not in overlay */}
       {!isMicActive && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <div className="fixed bottom-28 right-6 z-50 lg:bottom-8 lg:right-8">
           <motion.button
             whileHover={{ scale: 1.1, y: -4 }}
             whileTap={{ scale: 0.9 }}

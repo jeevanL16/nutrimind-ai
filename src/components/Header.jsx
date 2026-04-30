@@ -12,7 +12,7 @@ const Header = () => {
         {/* Only show logo on mobile/tablet */}
         <div className="flex items-center gap-3 lg:hidden">
           <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
-            <img src="/logo.png" alt="NutriMind Logo" className="w-full h-full object-cover" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="NutriMind Logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <h1 className="text-lg font-black tracking-tighter leading-none mb-0.5">NutriMind<span className="text-neon">.AI</span></h1>
