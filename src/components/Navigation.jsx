@@ -4,10 +4,9 @@ import useStore from '../store/useStore';
 import { motion } from 'framer-motion';
 
 const navItems = [
-  { id: 'home', icon: Home, label: 'Home' },
+  { id: 'home', icon: Home, label: 'Dashboard' },
   { id: 'scan', icon: ScanLine, label: 'Scan' },
-  { id: 'spacer', icon: null, label: '' },
-  { id: 'insights', icon: PieChart, label: 'Insights' },
+  { id: 'insights', icon: PieChart, label: 'Stats' },
   { id: 'coach', icon: MessageSquare, label: 'Coach' }
 ];
 
@@ -15,14 +14,10 @@ const Navigation = () => {
   const { activeTab, setActiveTab } = useStore();
 
   return (
-    <nav className="fixed bottom-0 w-full z-40 px-4 pb-4 pt-2 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent pointer-events-none" role="tablist" aria-label="Main navigation">
-      <div className="container mx-auto max-w-md pointer-events-auto">
-        <div className="glass-card !rounded-2xl flex justify-between items-center px-3 py-2 !bg-[#0d0d0d]/80 !border-white/[0.06] !shadow-[0_-4px_30px_rgba(0,0,0,0.6)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 px-6 pb-8 pt-4 pointer-events-none">
+      <div className="max-w-md mx-auto pointer-events-auto">
+        <div className="bg-[#111111]/80 backdrop-blur-2xl border border-white/5 rounded-[24px] flex justify-around items-center px-2 py-2 shadow-2xl">
           {navItems.map((item) => {
-            if (item.id === 'spacer') {
-              return <div key="spacer" className="w-14" aria-hidden="true" />;
-            }
-            
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             
@@ -30,32 +25,29 @@ const Navigation = () => {
               <motion.button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
+                whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.9 }}
-                className="relative flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-xl"
-                aria-label={`Navigate to ${item.label}`}
-                aria-current={isActive ? 'page' : undefined}
-                role="tab"
-                tabIndex={0}
+                className="relative flex flex-col items-center justify-center gap-1.5 w-16 h-14 rounded-2xl transition-all"
               >
                 {isActive && (
                   <motion.div
                     layoutId="nav-pill"
-                    className="absolute inset-0 bg-neon/10 rounded-xl border border-neon/20"
+                    className="absolute inset-0 bg-white/[0.03] rounded-2xl border border-white/5"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
                 
-                <motion.div
-                  animate={{ 
-                    y: isActive ? -2 : 0,
-                    scale: isActive ? 1.1 : 1
-                  }}
-                  className={`relative z-10 ${isActive ? 'text-neon' : 'text-white/40'}`}
-                >
-                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
-                </motion.div>
+                <div className={`relative z-10 transition-colors ${isActive ? 'text-neon' : 'text-white/30'}`}>
+                  <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                  {isActive && (
+                     <motion.div 
+                       layoutId="glow"
+                       className="absolute inset-0 blur-md opacity-50 bg-neon/30" 
+                     />
+                  )}
+                </div>
                 
-                <span className={`text-[9px] font-bold relative z-10 tracking-wide ${isActive ? 'text-neon' : 'text-white/30'}`}>
+                <span className={`text-[10px] font-black uppercase tracking-widest relative z-10 transition-colors ${isActive ? 'text-neon' : 'text-white/20'}`}>
                   {item.label}
                 </span>
               </motion.button>

@@ -1,32 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --neon: #00FF87;
+  --secondary: #7C3AED;
+  --bg-dark: #0A0A0A;
+}
+
 @layer base {
   body {
-    @apply font-sans antialiased;
-    background: radial-gradient(circle at top center, #111111 0%, #050505 100%);
-    color: #FAFAFA;
+    @apply font-sans antialiased text-[#FAFAFA];
+    background-color: var(--bg-dark);
+    background-image: 
+      radial-gradient(circle at 50% -20%, rgba(0, 255, 135, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(124, 58, 237, 0.05) 0%, transparent 30%);
     min-height: 100vh;
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-outfit;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.5)] transition-all duration-300;
+    @apply bg-white/[0.03] backdrop-blur-3xl border border-white/[0.08] rounded-[32px] shadow-[0_8px_40px_rgba(0,0,0,0.4)] transition-all duration-500;
+  }
+  
+  .glass-card:hover {
+    @apply border-white/[0.12] bg-white/[0.05];
   }
   
   .glass-button {
-    @apply bg-white/[0.05] hover:bg-white/[0.1] backdrop-blur-xl border border-white/[0.1] rounded-2xl transition-all duration-300;
+    @apply bg-white/[0.05] hover:bg-white/[0.1] backdrop-blur-2xl border border-white/[0.1] rounded-2xl transition-all duration-300 active:scale-95;
   }
 
-  .neon-text {
-    text-shadow: 0 0 15px rgba(0, 255, 135, 0.4), 0 0 30px rgba(0, 255, 135, 0.2);
+  .neon-glow {
+    box-shadow: 0 0 20px rgba(0, 255, 135, 0.2), 0 0 40px rgba(0, 255, 135, 0.1);
   }
-  
+
+  .text-neon {
+    color: var(--neon);
+  }
+
+  .bg-neon {
+    background-color: var(--neon);
+  }
+
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -34,4 +58,31 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 135, 0.3);
+  }
+}
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

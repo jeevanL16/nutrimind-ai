@@ -1,28 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 const HealthRing = ({ score, size = 200, strokeWidth = 14 }) => {
-  const [animatedScore, setAnimatedScore] = useState(0);
-  const controls = useAnimation();
-
-  useEffect(() => {
-    // Count up animation
-    let start = 0;
-    const end = score;
-    if (end === 0) return;
-    
-    const duration = 1500;
-    const stepTime = Math.abs(Math.floor(duration / end));
-    
-    const timer = setInterval(() => {
-      start += 1;
-      setAnimatedScore(start);
-      if (start >= end) clearInterval(timer);
-    }, stepTime);
-    
-    return () => clearInterval(timer);
-  }, [score]);
-
   const getColor = (val) => {
     if (val >= 80) return '#00FF87'; // Neon Green
     if (val >= 50) return '#FBBF24'; // Yellow
@@ -35,14 +14,26 @@ const HealthRing = ({ score, size = 200, strokeWidth = 14 }) => {
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="relative flex justify-center items-center py-4">
+    <div className="relative flex justify-center items-center">
       <div className="relative flex justify-center items-center" style={{ width: size, height: size }}>
-        <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+        {/* Glow effect */}
+        <div 
+          className="absolute inset-0 rounded-full blur-[40px] opacity-20 transition-all duration-1000"
+          style={{ backgroundColor: color }}
+        />
+        
+        <svg className="absolute inset-0 w-full h-full transform -rotate-90 filter drop-shadow-2xl">
+          <defs>
+            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={color} />
+              <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.5" />
+            </linearGradient>
+          </defs>
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="rgba(255,255,255,0.05)"
+            stroke="rgba(255,255,255,0.03)"
             strokeWidth={strokeWidth}
             fill="transparent"
             strokeLinecap="round"
@@ -50,7 +41,7 @@ const HealthRing = ({ score, size = 200, strokeWidth = 14 }) => {
           <motion.circle
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 2, ease: [0.23, 1, 0.32, 1] }}
             cx={size / 2}
             cy={size / 2}
             r={radius}
@@ -58,25 +49,9 @@ const HealthRing = ({ score, size = 200, strokeWidth = 14 }) => {
             strokeWidth={strokeWidth}
             fill="transparent"
             strokeLinecap="round"
-            style={{ strokeDasharray: circumference }}
-            className="drop-shadow-[0_0_12px_rgba(0,255,135,0.5)]"
+            style={{ strokeDasharray: circumference, filter: `drop-shadow(0 0 10px ${color})` }}
           />
         </svg>
-
-        <div className="text-center flex flex-col items-center justify-center z-10">
-          <motion.span 
-            className="text-6xl font-black tracking-tighter"
-            style={{ color }}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
-          >
-            {animatedScore}
-          </motion.span>
-          <span className="text-xs text-white/50 font-bold uppercase tracking-[0.2em] mt-1">
-            Health Score
-          </span>
-        </div>
       </div>
     </div>
   );

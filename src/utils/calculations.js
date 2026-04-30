@@ -47,9 +47,63 @@ export const calculateHealthScore = (todayLog, targets) => {
 };
 
 /**
+ * Generic calculation for a single food item.
+ * Supports "unit" and "per100g" scaling.
+ * Formula: 
+ * - Unit: base * quantity
+ * - Per100g: (base / 100) * grams * quantity
+ */
+export const calculateFoodTotals = (food) => {
+  // Point 5: Convert all values to numbers (parseFloat) and handle undefined safely
+  const baseCals = parseFloat(food.calories) || 0;
+  const baseProt = parseFloat(food.protein) || 0;
+  const baseCarbs = parseFloat(food.carbs) || 0;
+  const baseFats = parseFloat(food.fats) || 0;
+  
+  const quantity = parseFloat(food.quantity) || 0;
+  const grams = parseFloat(food.servingSize) || 0;
+  const type = food.servingType || 'unit';
+
+  // Point 2: Correct Formula
+  // If unit: multiplier = quantity
+  // If per100g: multiplier = (grams / 100) * quantity
+  const multiplier = type === 'per100g' 
+    ? (grams / 100) * quantity 
+    : quantity;
+
+  // Prevent NaN errors by ensuring multiplier is a number
+  const safeMult = isNaN(multiplier) ? 0 : multiplier;
+
+  return {
+    caloriesTotal: Math.round(baseCals * safeMult),
+    proteinTotal: parseFloat((baseProt * safeMult).toFixed(1)),
+    carbsTotal: parseFloat((baseCarbs * safeMult).toFixed(1)),
+    fatsTotal: parseFloat((baseFats * safeMult).toFixed(1))
+  };
+};
+
+/**
+ * Calculates global totals for a list of logged items.
+ * Points 4: totalCalories = sum(all food.caloriesTotal)
+ */
+export const calculateGlobalTotals = (items) => {
+  if (!Array.isArray(items)) return { calories: 0, protein: 0, carbs: 0, fats: 0 };
+  
+  return items.reduce((acc, item) => {
+    return {
+      calories: Number(acc.calories) + (Number(item.caloriesTotal) || 0),
+      protein: parseFloat((Number(acc.protein) + (Number(item.proteinTotal) || 0)).toFixed(1)),
+      carbs: parseFloat((Number(acc.carbs) + (Number(item.carbsTotal) || 0)).toFixed(1)),
+      fats: parseFloat((Number(acc.fats) + (Number(item.fatsTotal) || 0)).toFixed(1))
+    };
+  }, { calories: 0, protein: 0, carbs: 0, fats: 0 });
+};
+
+
+
+
+/**
  * Simple sanitizer to prevent XSS in chat inputs.
- * @param {string} input - User input string
- * @returns {string} Sanitized string
  */
 export const sanitizeInput = (input) => {
   if (!input) return '';
@@ -64,3 +118,4 @@ export const sanitizeInput = (input) => {
     return escapeMap[match];
   });
 };
+

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { calculateTargets, calculateHealthScore } from '../utils/calculations';
+import { calculateTargets, calculateHealthScore, calculateFoodTotals, calculateGlobalTotals } from '../utils/calculations';
 
 const useStore = create(
   persist(
@@ -19,17 +19,14 @@ const useStore = create(
       goals: calculateTargets('Fat Loss', 2200),
 
       todayLog: {
-        calories: 1450,
-        protein: 95,
-        carbs: 140,
-        fats: 45,
-        steps: 6400,
-        items: [
-          { id: 1, name: 'Masala Dosa', calories: 350, protein: 8, time: '09:00 AM' },
-          { id: 2, name: 'Filter Coffee', calories: 80, protein: 2, time: '09:30 AM' },
-          { id: 3, name: 'Chicken Biryani', calories: 650, protein: 35, time: '01:30 PM' }
-        ]
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        steps: 0,
+        items: []
       },
+
       
       activeTab: 'home',
       isMicActive: false,
@@ -52,13 +49,22 @@ const useStore = create(
       }),
 
       addFoodLog: (food) => set((state) => {
+        const itemTotals = calculateFoodTotals(food);
+        
+        const newItem = { 
+          ...food, 
+          id: Date.now(), 
+          time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+          ...itemTotals
+        };
+
+        const newItems = [newItem, ...state.todayLog.items];
+        const newTotals = calculateGlobalTotals(newItems);
+        
         const newLog = {
           ...state.todayLog,
-          calories: state.todayLog.calories + food.calories,
-          protein: state.todayLog.protein + food.protein,
-          carbs: state.todayLog.carbs + (food.carbs || 0),
-          fats: state.todayLog.fats + (food.fats || 0),
-          items: [{ ...food, id: Date.now(), time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }, ...state.todayLog.items]
+          ...newTotals,
+          items: newItems
         };
         
         const newScore = calculateHealthScore(newLog, state.goals);
@@ -68,10 +74,32 @@ const useStore = create(
           user: { 
             ...state.user, 
             healthScore: newScore, 
-            xp: state.user.xp + 25 // Gamification XP for logging
+            xp: state.user.xp + 25 
           }
         };
       }),
+
+      removeFoodLog: (id) => set((state) => {
+        const newItems = state.todayLog.items.filter(item => item.id !== id);
+        const newTotals = calculateGlobalTotals(newItems);
+        
+        const newLog = {
+          ...state.todayLog,
+          ...newTotals,
+          items: newItems
+        };
+        
+        const newScore = calculateHealthScore(newLog, state.goals);
+
+        return {
+          todayLog: newLog,
+          user: { 
+            ...state.user, 
+            healthScore: newScore 
+          }
+        };
+      }),
+
       
       toggleMic: () => set((state) => ({ isMicActive: !state.isMicActive })),
       setLanguage: (lang) => set((state) => ({ user: { ...state.user, language: lang } }))
@@ -83,3 +111,4 @@ const useStore = create(
 );
 
 export default useStore;
+
